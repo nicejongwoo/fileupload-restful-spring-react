@@ -22,7 +22,7 @@ public class FileController {
     public ResponseEntity<?> uploadFile(MultipartFile file) {
         FileRequest request = fileService.storeFile(file);
         Long id = fileService.insert(request);
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @GetMapping("/file/{id}")
