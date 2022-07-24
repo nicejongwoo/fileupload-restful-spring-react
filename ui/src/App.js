@@ -10,9 +10,9 @@ function App() {
   return (
       <>
           <Routes>
-              <Route path="/attachment" element={<Attachment/>} />
+              <Route path="/" element={<Attachment/>} />
 
-              {["/attachment/insert", "/attachment/:id"].map((path, index) =>
+              {["/insert", "/:id"].map((path, index) =>
                 <Route
                     path={path}
                     element={

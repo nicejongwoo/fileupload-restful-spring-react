@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 
 function AttachmentInsertOrUpdate () {
 
@@ -29,16 +30,51 @@ function AttachmentInsertOrUpdate () {
     }
 
     const handleSubmit = () => {
+        console.log("fileId:: ", fileId)
         //post attach
         fetch("http://localhost:8080/api/attachment", {
             method: "POST",
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({"fileId": fileId})
         }).then((response) => response.json()).then((result) => {
-
+            console.log("Result:: ", result);
         }).catch((error) => {
             console.error("Error: ", error);
         })
     }
+    const params = useParams()
+    const id = params.id;
+
+    const downloadFile = (id) => {
+        fetch(`http://localhost:8080/api/file/download/${id}`, {
+            method: "GET",
+        }).then(response => response.blob()).then(result => {
+            console.log("downloadFile Success::: ", result)
+            setPreview(URL.createObjectURL(result));
+        }).catch(error => {
+            console.error("downloadFile Error:: ", error)
+        })
+    }
+
+    const getFileByAttachmentId = (id) => {
+        fetch(`http://localhost:8080/api/attachment/${id}`, {
+            method: "GET",
+        }).then(response => response.json()).then(result => {
+            console.log("getFileByAttachmentId Success::: ", result);
+            downloadFile(result.file.id)
+            setFileId(result.file.id)
+        }).catch(error => {
+            console.error("getFileByAttachmentId Error::: ", error);
+        })
+    }
+    useEffect(() => {
+        console.log("id:: ", id)
+        if (id !== undefined) {
+            //get file
+            //then download -> preview
+            getFileByAttachmentId(id)
+        }
+    }, [id])
 
     return (
         <>

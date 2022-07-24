@@ -8,11 +8,15 @@ import me.example.fileuploadrestfulspringreact.web.dto.FileRequest;
 import me.example.fileuploadrestfulspringreact.web.dto.FileResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,6 +83,16 @@ public class FileServiceImpl implements FileService{
                 .extension(file.getExtension())
                 .size(file.getSize())
                 .build();
+    }
+
+    @Override
+    public Resource loadFileAsResource(Long id) throws MalformedURLException {
+        File file = fileRepository.findById(id).orElseThrow(() -> new RuntimeException("File Not Found"));
+        Path path = Paths.get(FILE_UPLOAD_DIRECTORY).toAbsolutePath().normalize();
+        Path target = path.resolve(file.getFileName()).normalize();
+        UrlResource resource = new UrlResource(target.toUri());
+
+        return resource;
     }
 
     private Path makeDirectory(String file_upload_directory) throws IOException {
