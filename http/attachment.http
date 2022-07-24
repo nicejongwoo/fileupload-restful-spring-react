@@ -1,0 +1,10 @@
+###
+POST localhost:8080/api/attachment
+Content-Type: application/json
+
+{
+  "fileId": 1
+}
+
+###
+GET localhost:8080/api/attachment/1

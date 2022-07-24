@@ -27,4 +27,8 @@ public class File {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "attachment_id")
     private Attachment attachment;
+
+    public void updateAttachment(Attachment attachment) {
+        this.attachment = attachment;
+    }
 }
