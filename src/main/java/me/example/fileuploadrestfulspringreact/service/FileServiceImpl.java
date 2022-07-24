@@ -2,11 +2,14 @@ package me.example.fileuploadrestfulspringreact.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.example.fileuploadrestfulspringreact.domain.File;
 import me.example.fileuploadrestfulspringreact.repository.FileRepository;
 import me.example.fileuploadrestfulspringreact.web.dto.FileRequest;
+import me.example.fileuploadrestfulspringreact.web.dto.FileResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -48,6 +51,34 @@ public class FileServiceImpl implements FileService{
 
         return new FileRequest(name, extension, size, contentType, filename);
 
+    }
+
+    @Transactional
+    @Override
+    public Long insert(FileRequest request) {
+        File file = File.builder()
+                .name(request.getName())
+                .extension(request.getExtension())
+                .contentType(request.getContentType())
+                .fileName(request.getFilename())
+                .size(request.getSize())
+                .build();
+
+        fileRepository.save(file);
+        return file.getId();
+    }
+
+    @Override
+    public FileResponse getFile(Long id) {
+        File file = fileRepository.findById(id).orElseThrow(() -> new RuntimeException("파일이 없습니다."));
+        return FileResponse.builder()
+                .id(file.getId())
+                .name(file.getName())
+                .fileName(file.getFileName())
+                .contentType(file.getContentType())
+                .extension(file.getExtension())
+                .size(file.getSize())
+                .build();
     }
 
     private Path makeDirectory(String file_upload_directory) throws IOException {

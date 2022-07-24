@@ -6,3 +6,6 @@ Content-Disposition: form-data; name="file"; filename="small-size-image.jpg"
 
 < ../test_image/small-size-image.jpg
 --WebAppBoundary--
+
+###
+GET localhost:8080/api/file/1
